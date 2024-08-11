@@ -5,8 +5,7 @@ async function sendSlackNotification(buildResult, prTitle, prUser, repo, runId,
   if (buildResult === 'failure') {
     const workflowUrl = `https://github.com/${repo}/actions/runs/${runId}`;
     const prUrl = `https://github.com/${repo}/pull/${prNumber}`;
-    // const message = `*Gradle build failed!*❌\nPR: "<${prUrl}|${prTitle}>" by @${prUser}\nWorkflow URL: <${workflowUrl}>`;
-    const message = `*Gradle build failed!*❌\nPR: "<\\${prUrl}|\\${prTitle}>" by @\\${prUser}\nWorkflow URL: <\\${workflowUrl}>`;
+    const message = `*Gradle build failed!*❌\nPR: "<${prUrl}|${prTitle}>" by @${prUser}\nWorkflow URL: <${workflowUrl}>`;
 
     try {
       await axios.post(process.env.SLACK_WEBHOOK_URL, {
