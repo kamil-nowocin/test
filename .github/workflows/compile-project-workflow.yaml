@@ -76,19 +76,18 @@ jobs:
             const postComment = require('./.github/scripts/post-comment.js');
             await postComment(github, context);
 
-#      - name: 'Make Slack Notification Script Executable'
-#        if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always()
-#        run: chmod +x .github/scripts/send-slack-notification.sh
-#
-#      - name: 'Send Slack Notification on Failure'
-#        if: always() && env.build_result == 'failure'  # Ensure this step runs if the build failed
-#        run: |
-#          ./.github/scripts/send-slack-notification.sh ${{ env.build_result }} "${{ github.event.pull_request.title }}" ${{ github.event.pull_request.user.login }} ${{ github.repository }} ${{ github.run_id }}
-#        env:
-#          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      #      - name: 'Make Slack Notification Script Executable'
+      #        if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always()
+      #        run: chmod +x .github/scripts/send-slack-notification.sh
+      #
+      #      - name: 'Send Slack Notification on Failure'
+      #        if: always() && env.build_result == 'failure'  # Ensure this step runs if the build failed
+      #        run: |
+      #          ./.github/scripts/send-slack-notification.sh ${{ env.build_result }} "${{ github.event.pull_request.title }}" ${{ github.event.pull_request.user.login }} ${{ github.repository }} ${{ github.run_id }}
+      #        env:
+      #          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       - name: 'Send Slack Notification on Failure'
-        if: always() && env.build_result == 'failure'
-        run: |
-          node .github/scripts/send-slack-notification.js ${{ env.build_result }} "${{ github.event.pull_request.title }}" ${{ github.event.pull_request.user.login }} ${{ github.repository }} ${{ github.run_id }}
+        if: always() && env.build_result == 'failure'  # Ensure this step runs if the build failed
+        run: npm run send-slack-notification ${{ env.build_result }} "${{ github.event.pull_request.title }}" ${{ github.event.pull_request.user.login }} ${{ github.repository }} ${{ github.run_id }} ${{ github.event.pull_request.number }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
