@@ -77,10 +77,11 @@ jobs:
             await postComment(github, context);
 
       - name: 'Make Slack Notification Script Executable'
+        if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always()
         run: chmod +x .github/scripts/send-slack-notification.sh
 
       - name: 'Send Slack Notification on Failure'
-        if: ${{ env.build_result == 'failure' }}
+        if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always() && env.build_result == 'failure'  # Ensure this step runs if the build failed
         run: |
           ./.github/scripts/send-slack-notification.sh ${{ env.build_result }} "${{ github.event.pull_request.title }}" ${{ github.sha }} ${{ github.repository }} ${{ github.run_id }}
         env:
