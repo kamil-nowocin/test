@@ -1,0 +1,13 @@
+{
+  "name": "github-actions-scripts",
+  "version": "1.0.0",
+  "description": "Scripts for GitHub Actions workflow",
+  "main": "index.js",
+  "scripts": {
+    "manage-labels": "node manage-labels.js",
+    "post-comment": "node post-comment.js"
+  },
+  "dependencies": {
+    "@octokit/rest": "^20.0.0"
+  }
+}

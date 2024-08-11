@@ -7,4 +7,5 @@ reports/
 *.DS_Store
 .DS_Store?
 *.apk
-*.ipa
+*.ipa!
+/.github/scripts/node_modules/
