@@ -9,10 +9,10 @@ run-name: ":construction_worker::construction:[#${{ github.run_number }}][Compil
 on:
   pull_request:
     branches:
-      - master
+      - main
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 jobs:
