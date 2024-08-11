@@ -1,43 +1,47 @@
-module.exports = async function manageLabels(github, context) {
-  const labels = [
-    { name: 'build-success', color: '0E8A16', description: 'Build succeeded' },
-    { name: 'build-failure', color: 'B60205', description: 'Build failed' }
-  ];
+const LABELS = [
+  { name: 'build-success', color: '0E8A16', description: 'Build succeeded' },
+  { name: 'build-failure', color: 'B60205', description: 'Build failed' }
+];
 
-  const resultLabel = process.env.build_result === 'success' ? 'build-success' : 'build-failure';
-  const removeLabel = process.env.build_result === 'success' ? 'build-failure' : 'build-success';
-
-  async function createOrUpdateLabel(github, owner, repo, label) {
-    try {
-      await github.rest.issues.updateLabel({
+async function createOrUpdateLabel(github, owner, repo, label) {
+  try {
+    await github.rest.issues.updateLabel({
+      owner,
+      repo,
+      name: label.name,
+      color: label.color,
+      description: label.description
+    });
+  } catch (error) {
+    if (error.status === 404) {
+      await github.rest.issues.createLabel({
         owner,
         repo,
         name: label.name,
         color: label.color,
         description: label.description
       });
-    } catch (error) {
-      if (error.status === 404) {
-        await github.rest.issues.createLabel({
-          owner,
-          repo,
-          name: label.name,
-          color: label.color,
-          description: label.description
-        });
-      } else {
-        console.error(`Failed to update or create label: ${error.message}`);
-      }
+    } else {
+      console.error(`Error updating/creating label "${label.name}": ${error.message}`);
     }
   }
+}
 
-  const issue_number = context.payload.pull_request.number;
+async function manageLabels(github, context) {
   const { owner, repo } = context.repo;
+  const issue_number = context.payload.pull_request.number;
 
-  for (const label of labels) {
+  const resultLabel = process.env.build_result === 'success' ? 'build-success' : 'build-failure';
+  const removeLabel = process.env.build_result === 'success' ? 'build-failure' : 'build-success';
+
+  for (const label of LABELS) {
     await createOrUpdateLabel(github, owner, repo, label);
   }
 
+  await manageIssueLabels(github, owner, repo, issue_number, resultLabel, removeLabel);
+}
+
+async function manageIssueLabels(github, owner, repo, issue_number, resultLabel, removeLabel) {
   try {
     await github.rest.issues.removeLabel({
       owner,
@@ -46,13 +50,19 @@ module.exports = async function manageLabels(github, context) {
       name: removeLabel
     });
   } catch (error) {
-    console.log(`Failed to remove label: ${removeLabel}. It might not have been added yet.`);
+    console.log(`Label "${removeLabel}" might not exist on the issue: ${error.message}`);
   }
 
-  await github.rest.issues.addLabels({
-    owner,
-    repo,
-    issue_number,
-    labels: [resultLabel]
-  });
-};
+  try {
+    await github.rest.issues.addLabels({
+      owner,
+      repo,
+      issue_number,
+      labels: [resultLabel]
+    });
+  } catch (error) {
+    console.error(`Error adding label "${resultLabel}": ${error.message}`);
+  }
+}
+
+module.exports = manageLabels;
