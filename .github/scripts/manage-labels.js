@@ -65,10 +65,10 @@ async function manageLabels(github, context) {
   const labelsToAdd = new Set();
 
   files.forEach(file => {
-    if (file.filename.startsWith('src/java/main')) {
+    if (file.filename.startsWith('src/main/java')) {
       labelsToAdd.add('APP');
     }
-    if (file.filename.startsWith('src/java/test')) {
+    if (file.filename.startsWith('src/test/java')) {
       labelsToAdd.add('TEST');
     }
   });
