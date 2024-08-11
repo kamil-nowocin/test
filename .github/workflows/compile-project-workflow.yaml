@@ -1,96 +1,3 @@
-#name: Compile Project
-#
-#permissions:
-#  issues: write
-#  pull-requests: write
-#
-#concurrency:
-#  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-#  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
-#
-#run-name: ":construction_worker::construction:[#${{ github.run_number }}][Compile Project] PR: \"${{ github.event.pull_request.title }}\" | Commit: ${{ github.sha }}"
-#
-#on:
-#  pull_request:
-#    branches:
-#      - main
-#  push:
-#    branches:
-#      - main
-#  workflow_dispatch:
-#
-#jobs:
-#  build:
-#    runs-on: ubuntu-latest
-#    name: 'Compile Project🛠️'
-#    steps:
-#      - name: 'Checkout code'
-#        uses: actions/checkout@v4
-#
-#      - name: 'Set up the environment'
-#        uses: actions/setup-java@v4
-#        with:
-#          java-version: '17'
-#          distribution: 'temurin'
-#
-#      - name: 'Set up Node.js'
-#        uses: actions/setup-node@v4
-#        with:
-#          node-version: '20'
-#
-#      - name: 'Install dependencies'
-#        run: npm install
-#        working-directory: .github/scripts
-#
-#      - name: 'Grant execute permission for gradlew'
-#        run: chmod +x ./gradlew
-#
-#      - name: 'Run Gradle build without tests'
-#        id: gradle_build
-#        run: ./gradlew compileTestJava
-#        continue-on-error: true
-#
-#      - name: 'Set build result'
-#        if: always()
-#        run: |
-#          if [[ "${{ steps.gradle_build.outcome }}" == "failure" ]]; then
-#            echo "build_result=failure" >> $GITHUB_ENV
-#            exit 1
-#          else
-#            echo "build_result=success" >> $GITHUB_ENV
-#          fi
-#
-#      - name: 'Apply Labels'
-#        if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always()
-#        uses: actions/github-script@v7
-#        with:
-#          script: |
-#            const manageLabels = require('./.github/scripts/manage-labels.js');
-#            await manageLabels(github, context);
-#
-#      - name: 'Post comment on PR'
-#        if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always()
-#        uses: actions/github-script@v7
-#        with:
-#          script: |
-#            const postComment = require('./.github/scripts/post-comment.js');
-#            await postComment(github, context);
-#
-#      #      - name: 'Make Slack Notification Script Executable'
-#      #        if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always()
-#      #        run: chmod +x .github/scripts/send-slack-notification.sh
-#      #
-#      #      - name: 'Send Slack Notification on Failure'
-#      #        if: always() && env.build_result == 'failure'  # Ensure this step runs if the build failed
-#      #        run: |
-#      #          ./.github/scripts/send-slack-notification.sh ${{ env.build_result }} "${{ github.event.pull_request.title }}" ${{ github.event.pull_request.user.login }} ${{ github.repository }} ${{ github.run_id }}
-#      #        env:
-#      #          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-#      - name: 'Send Slack Notification on Failure'
-#        if: always() && env.build_result == 'failure'  # Ensure this step runs if the build failed
-#        run: npm run send-slack-notification ${{ env.build_result }} "${{ github.event.pull_request.title }}" ${{ github.event.pull_request.user.login }} ${{ github.repository }} ${{ github.run_id }} ${{ github.event.pull_request.number }}
-#        env:
-#          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 name: Compile Project
 
 permissions:
@@ -107,9 +14,6 @@ on:
   pull_request:
     branches:
       - main
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
@@ -123,14 +27,29 @@ jobs:
       - name: 'Set up Node.js'
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # Make sure Node.js is set up
+          node-version: '20'
 
       - name: 'Install Dependencies'
-        run: npm install  # Install the dependencies listed in package.json
-        working-directory: .github/scripts  # Set the correct working directory if package.json is located in .github/scripts
+        run: npm install
+      #        working-directory: .github/scripts
+
+      - name: 'Setting up the environment'
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: 'Grant execute permission for gradlew'
         run: chmod +x ./gradlew
+
+      - name: 'Cache Gradle packages'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
 
       - name: 'Run Gradle build without tests'
         id: gradle_build
@@ -164,8 +83,8 @@ jobs:
             await postComment(github, context);
 
       - name: 'Send Slack Notification on Failure'
-        if: always() && env.build_result == 'failure'  # Ensure this step runs if the build failed
+        if: always() && env.build_result == 'failure'
         run: npm run send-slack-notification ${{ env.build_result }} "${{ github.event.pull_request.title }}" ${{ github.event.pull_request.user.login }} ${{ github.repository }} ${{ github.run_id }} ${{ github.event.pull_request.number }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        working-directory: .github/scripts  # Set the correct working directory
+        working-directory: .github/scripts
