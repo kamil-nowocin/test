@@ -138,23 +138,22 @@ jobs:
         continue-on-error: true
 
       - name: 'Set build result'
-        if: always()  # This ensures this step runs even if the build fails
+        if: always()
         run: |
           if [[ "${{ steps.gradle_build.outcome }}" == "failure" ]]; then
             echo "build_result=failure" >> $GITHUB_ENV
-          else:
+            exit 1
+          else
             echo "build_result=success" >> $GITHUB_ENV
           fi
 
       - name: 'Apply Labels'
         if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always()
-        run: npm run manage-labels
-        working-directory: .github/scripts  # Set the correct working directory
+        run: npm run manage-labels  # No working-directory here because it needs full repo context
 
       - name: 'Post comment on PR'
         if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always()
-        run: npm run post-comment
-        working-directory: .github/scripts  # Set the correct working directory
+        run: npm run post-comment  # No working-directory here because it needs full repo context
 
       - name: 'Send Slack Notification on Failure'
         if: always() && env.build_result == 'failure'  # Ensure this step runs if the build failed
