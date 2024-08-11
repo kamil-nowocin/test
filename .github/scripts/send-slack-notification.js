@@ -1,7 +1,6 @@
-const { Octokit } = require("@octokit/rest");
-
 async function sendSlackNotification(buildResult, prTitle, prUser, repo, runId, prNumber) {
   if (buildResult === 'failure') {
+    const { Octokit } = await import("@octokit/rest");
     const octokit = new Octokit();
     const workflowUrl = `https://github.com/${repo}/actions/runs/${runId}`;
     const prUrl = `https://github.com/${repo}/pull/${prNumber}`;
