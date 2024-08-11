@@ -29,6 +29,10 @@ jobs:
         with:
           node-version: '20'
 
+      - name: 'Install Dependencies'
+        run: npm install
+        working-directory: .github/scripts
+
       - name: 'Cache npm dependencies'
         uses: actions/cache@v4
         with:
@@ -36,10 +40,6 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-
-      - name: 'Install Dependencies'
-        run: npm install
-        working-directory: .github/scripts
 
       - name: 'Setting up the environment'
         uses: actions/setup-java@v4
