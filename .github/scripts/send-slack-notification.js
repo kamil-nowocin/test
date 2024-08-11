@@ -1,18 +1,16 @@
+const axios = require('axios');
+
 async function sendSlackNotification(buildResult, prTitle, prUser, repo, runId, prNumber) {
   if (buildResult === 'failure') {
-    const { Octokit } = await import("@octokit/rest");
-    const octokit = new Octokit();
     const workflowUrl = `https://github.com/${repo}/actions/runs/${runId}`;
     const prUrl = `https://github.com/${repo}/pull/${prNumber}`;
-    const message = `*Gradle build failed!* ❌\nPR: "<${prUrl}|${prTitle}>" by @${prUser}\nWorkflow URL: <${workflowUrl}>`;
+    const message = `*Gradle build failed!*❌\nPR: "<${prUrl}|${prTitle}>" by @${prUser}\nWorkflow URL: <${workflowUrl}>`;
 
     try {
-      await octokit.request('POST', process.env.SLACK_WEBHOOK_URL, {
-        data: {
-          text: message,
-          username: 'GitHub Actions',
-          icon_emoji: ':warning:',
-        },
+      await axios.post(process.env.SLACK_WEBHOOK_URL, {
+        text: message,
+        username: 'GitHub Actions',
+        icon_emoji: ':warning:',
       });
       console.log('Slack notification sent successfully');
     } catch (error) {
