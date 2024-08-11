@@ -81,8 +81,8 @@ jobs:
         run: chmod +x .github/scripts/send-slack-notification.sh
 
       - name: 'Send Slack Notification on Failure'
-        if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always() && env.build_result == 'failure'  # Ensure this step runs if the build failed
+        if: always() && env.build_result == 'failure'  # Ensure this step runs if the build failed
         run: |
-          ./.github/scripts/send-slack-notification.sh ${{ env.build_result }} "${{ github.event.pull_request.title }}" ${{ github.sha }} ${{ github.repository }} ${{ github.run_id }}
+          ./.github/scripts/send-slack-notification.sh ${{ env.build_result }} "${{ github.event.pull_request.title }}" ${{ github.event.pull_request.user.login }} ${{ github.repository }} ${{ github.run_id }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
