@@ -1,4 +1,4 @@
-name: CircleK GMAP Backend | Compile Project
+name: Compile Project
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
