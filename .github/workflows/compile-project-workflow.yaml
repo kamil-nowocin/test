@@ -29,6 +29,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: 'Grant execute permission for gradlew'
+        run: chmod +x ./gradlew
+
       - name: 'Run Gradle build without tests'
         id: gradle_build
         run: ./gradlew compileTestJava
