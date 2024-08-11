@@ -1,0 +1,10 @@
+.gradle/
+.idea/
+allure-report/
+build/
+logs-output/
+reports/
+*.DS_Store
+.DS_Store?
+*.apk
+*.ipa

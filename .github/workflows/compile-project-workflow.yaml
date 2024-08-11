@@ -1,0 +1,126 @@
+name: CircleK GMAP Backend | Compile Project
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+run-name: ":construction_worker::construction:[#${{ github.run_number }}][Compile Project] PR: \"${{ github.event.pull_request.title }}\" | Commit: ${{ github.sha }}"
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: 'Compile Project🛠️'
+    steps:
+      - name: 'Checkout code'
+        uses: actions/checkout@v4
+
+      - name: 'Set up the environment'
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: 'Run Gradle build without tests'
+        id: gradle_build
+        run: ./gradlew compileTestJava
+        continue-on-error: true
+
+      - name: 'Set build result'
+        if: always()
+        run: |
+          if [[ "${{ steps.gradle_build.outcome }}" == "failure" ]]; then
+            echo "build_result=failure" >> $GITHUB_ENV
+            exit 1
+          else
+            echo "build_result=success" >> $GITHUB_ENV
+          fi
+
+      - name: 'Apply Labels'
+        if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always()
+        uses: actions/github-script@v7
+        env:
+          build_result: ${{ env.build_result }}
+        with:
+          script: |
+            const labels = [
+              { name: 'build-success', color: '0E8A16', description: 'Build succeeded' },
+              { name: 'build-failure', color: 'B60205', description: 'Build failed' }
+            ];
+            
+            const resultLabel = process.env.build_result === 'success' ? 'build-success': 'build-failure';
+            const removeLabel = process.env.build_result === 'success' ? 'build-failure': 'build-success';
+            
+            async function createOrUpdateLabel(github, owner, repo, label) {
+              try {
+                await github.rest.issues.updateLabel({
+                  owner,
+                  repo,
+                  name: label.name,
+                  color: label.color,
+                  description: label.description
+                });
+              } catch (error) {
+                if (error.status === 404) {
+                  await github.rest.issues.createLabel({
+                    owner,
+                    repo,
+                    name: label.name,
+                    color: label.color,
+                    description: label.description
+                  });
+                } else {
+                  console.error(`Failed to update or create label: ${error.message}`);
+                }
+              }
+            }
+            
+            async function manageLabels(github, context, labels, resultLabel, removeLabel) {
+              const issue_number = context.payload.pull_request.number;
+              const { owner, repo } = context.repo;
+              for (const label of labels) {
+                  await createOrUpdateLabel(github, owner, repo, label);
+              }
+              try {
+                await github.rest.issues.removeLabel({
+                owner,
+                repo,
+                issue_number,
+                name: removeLabel
+                });
+              } catch (error) {
+                  console.log(`Failed to remove label: ${removeLabel}. It might not have been added yet.`);
+              }
+              await github.rest.issues.addLabels({
+                owner,
+                repo,
+                issue_number,
+                labels: [ resultLabel ]
+                });
+            }
+            
+            manageLabels(github, context, labels, resultLabel, removeLabel);
+
+      - name: 'Post comment on PR'
+        if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = `${process.env.GITHUB_SERVER_URL}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const message = process.env.build_result === 'success'
+              ? '✅ The Gradle build completed successfully without any issues!'
+              : `❌ The Gradle build failed!\nPlease check the details: [View Workflow Run](${url})`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message
+            })
