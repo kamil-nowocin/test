@@ -4,8 +4,8 @@ async function postComment(github, context) {
   const run_number = context.runNumber;
   const url = `${process.env.GITHUB_SERVER_URL}/${owner}/${repo}/actions/runs/${context.runId}`;
   const message = process.env.build_result === 'success'
-      ? `VOL4: Gradle build completed successfully without any issues! PR is ready for review! ✅`
-      : `VOL4: Gradle build failed! PR isn't ready for review! ❌\nPlease check [Github Actions Workflow Run #${run_number}](${url}) for more information`;
+      ? `VOL5: Gradle build completed successfully without any issues! PR is ready for review! ✅`
+      : `VOL5: Gradle build failed! PR isn't ready for review! ❌\nPlease check Github Actions Workflow [Run #${run_number}](${url}) for more information`;
 
   try {
     await github.rest.issues.createComment({ owner, repo, issue_number, body: message });
