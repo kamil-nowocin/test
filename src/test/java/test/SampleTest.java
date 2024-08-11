@@ -10,6 +10,6 @@ public class SampleTest {
     private void navigateToMainPage() {
         var a = 1;
         var b = 2;
-        Assert.assertEquals(a, b);
+        Assert.assertEquals(a, b)
     }
 }
