@@ -75,3 +75,13 @@ jobs:
           script: |
             const postComment = require('./.github/scripts/post-comment.js');
             await postComment(github, context);
+
+      - name: 'Make Slack Notification Script Executable'
+        run: chmod +x .github/scripts/send-slack-notification.sh
+
+      - name: 'Send Slack Notification on Failure'
+        if: ${{ env.build_result == 'failure' }}
+        run: |
+          ./.github/scripts/send-slack-notification.sh ${{ env.build_result }} "${{ github.event.pull_request.title }}" ${{ github.sha }} ${{ github.repository }} ${{ github.run_id }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
