@@ -17,12 +17,9 @@ on:
   workflow_dispatch:
     inputs:
       testGroup:
-        description: "Select the GMAP NLP Backend test group"
+        description: "Enter the GMAP NLP Backend test group (leave blank if none)"
         required: false
-        type: choice
-        options:
-          - "REGRESSION"
-          - "SMOKE"
+        type: string
 
 jobs:
   build:
