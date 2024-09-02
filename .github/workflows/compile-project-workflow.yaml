@@ -57,12 +57,7 @@ jobs:
 
       - name: "🚨 Run ${{ env.BACKEND_MODULE }} Backend Tests 🚨"
         run: |
-          GRADLE_COMMAND="./gradlew ${{ env.GRADLE_TASK }} \
-          -DruntimeEnvironment='CICD' \
-          -DbackendEnvironment='${BACKEND_ENVIRONMENT%% *}' \
-          -DenableTestRetry='$ENABLE_TEST_RETRY' \
-          -DenableXrayReport='$ENABLE_XRAY_REPORT' \
-          -DenableSlackReport='$ENABLE_SLACK_REPORT'"
+          GRADLE_COMMAND="./gradlew"
           
           if [[ -n "${{ github.event.inputs.testGroup }}" ]]; then
             GRADLE_COMMAND="$GRADLE_COMMAND -Dgroups='${{ github.event.inputs.testGroup }}'"
