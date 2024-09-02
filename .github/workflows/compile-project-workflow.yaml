@@ -55,10 +55,23 @@ jobs:
       - name: 'Grant execute permission for gradlew'
         run: chmod +x ./gradlew
 
-      - name: 'Run Gradle build without tests'
-        id: gradle_build
+      - name: "🚨 Run ${{ env.BACKEND_MODULE }} Backend Tests 🚨"
         run: |
-          ./gradlew compileTestJava ${${{ github.event.inputs.testGroup }}:+-Dgroups='${{ github.event.inputs.testGroup }}'}
+          GRADLE_COMMAND="./gradlew ${{ env.GRADLE_TASK }} \
+          -DruntimeEnvironment='CICD' \
+          -DbackendEnvironment='${BACKEND_ENVIRONMENT%% *}' \
+          -DenableTestRetry='$ENABLE_TEST_RETRY' \
+          -DenableXrayReport='$ENABLE_XRAY_REPORT' \
+          -DenableSlackReport='$ENABLE_SLACK_REPORT'"
+          
+          if [[ -n "${{ github.event.inputs.testGroup }}" ]]; then
+            GRADLE_COMMAND="$GRADLE_COMMAND -Dgroups='${{ github.event.inputs.testGroup }}'"
+          fi
+          
+          echo "Executing command: $GRADLE_COMMAND"
+          eval "$GRADLE_COMMAND"
+        shell: bash
+
         continue-on-error: true
 
       - name: 'Cache Gradle packages'
