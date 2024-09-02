@@ -15,6 +15,14 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      testGroup:
+        description: "Select the GMAP NLP Backend test group"
+        required: false
+        type: choice
+        options:
+          - "REGRESSION"
+          - "SMOKE"
 
 jobs:
   build:
@@ -52,7 +60,8 @@ jobs:
 
       - name: 'Run Gradle build without tests'
         id: gradle_build
-        run: ./gradlew compileTestJava
+        run: |
+          ./gradlew compileTestJava ${${{ github.event.inputs.testGroup }}:+-Dgroups='${{ github.event.inputs.testGroup }}'}"
         continue-on-error: true
 
       - name: 'Cache Gradle packages'
