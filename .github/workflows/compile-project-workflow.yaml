@@ -58,7 +58,7 @@ jobs:
       - name: 'Run Gradle build without tests'
         id: gradle_build
         run: |
-          ./gradlew compileTestJava ${${{ github.event.inputs.testGroup }}:+-Dgroups='${{ github.event.inputs.testGroup }}'}"
+          ./gradlew compileTestJava ${${{ github.event.inputs.testGroup }}:+-Dgroups='${{ github.event.inputs.testGroup }}'}
         continue-on-error: true
 
       - name: 'Cache Gradle packages'
