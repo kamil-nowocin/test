@@ -2,10 +2,10 @@
 
 if [[ "$GITHUB_EVENT_NAME" == "schedule" ]]; then
   CURRENT_TIME=$((10#$(date -u +"%H%M")))
-  if [[ "$CURRENT_TIME" -ge 1855 && "$CURRENT_TIME" -lt 1900 ]]; then
+  if [[ "$CURRENT_TIME" -ge 1920 && "$CURRENT_TIME" -lt 1930 ]]; then
     BACKEND_MODULE="WFE_Websters"
     GRADLE_TASK="$BACKEND_MODULE:test"
-  elif [[ "$CURRENT_TIME" -ge 1905 && "$CURRENT_TIME" -lt 1910 ]]; then
+  elif [[ "$CURRENT_TIME" -ge 1935 && "$CURRENT_TIME" -lt 1945 ]]; then
     BACKEND_MODULE="WFE_Klasters"
     GRADLE_TASK="$BACKEND_MODULE:test"
   else
