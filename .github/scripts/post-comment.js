@@ -8,9 +8,10 @@ async function postComment(github, context) {
       : `### Gradle build failed! ❌\nPR isn't ready for review! Please check GitHub Actions - [Compile Project Workflow #${run_number}](${url}) for more information.`;
 
   try {
-    await github.rest.issues.createComment({owner, repo, issue_number, body: message});
+    await github.rest.issues.createComment(
+        {owner, repo, issue_number, body: message});
   } catch (error) {
-    console.error(`Error posting comment: ${error.message}`);
+    console.error(`Error posting comment: ${error.message}!`);
   }
 }
 

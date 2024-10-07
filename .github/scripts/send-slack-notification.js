@@ -21,7 +21,6 @@ async function sendSlackNotification(buildResult, prTitle, prUser, repo, runId,
   }
 }
 
-// Using .then() and .catch() to handle the promise
 const [buildResult, prTitle, prUser, repo, runId, prNumber] = process.argv.slice(
     2);
 sendSlackNotification(buildResult, prTitle, prUser, repo, runId, prNumber)
@@ -29,10 +28,9 @@ sendSlackNotification(buildResult, prTitle, prUser, repo, runId, prNumber)
   console.log('Slack notification sent successfully!');
 })
 .catch((error) => {
-  console.error(`Error sending Slack notification: ${error.message}`);
+  console.error(`Error sending Slack notification: ${error.message}!`);
 });
 
-// Sanitization function remains the same
 function sanitizeInput(input) {
   if (typeof input !== 'string') {
     return '';

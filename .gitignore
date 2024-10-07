@@ -1,11 +1,8 @@
 .gradle/
 .idea/
-allure-report/
+.github/scripts/node_modules/
 build/
-logs-output/
-reports/
-*.DS_Store
-.DS_Store?
-*.apk
-*.ipa!
-/.github/scripts/node_modules/
+test-output/
+allure-report/
+*/src/main/resources/secret-properties.properties
+*.iml

@@ -1,31 +1,27 @@
 plugins {
     id 'java'
-    //https://github.com/radarsh/gradle-test-logger-plugin
-    id 'com.adarshr.test-logger' version '3.0.0'
 }
 
-repositories {
-    mavenCentral()
-}
+allprojects {
 
-
-dependencies {
-    // https://mvnrepository.com/artifact/org.testng/testng
-    implementation group: 'org.testng', name: 'testng', version: '7.6.1'
-}
-
-
-test {
-    dependsOn 'cleanTest'
-
-    useTestNG() {
-//        suites "src/test/resources/xml_runners/TestNGRunner.xml"
+    repositories {
+        mavenCentral()
     }
-}
 
-testlogger {
-    theme 'mocha'
-    slowThreshold 120000 //2min
-    showSimpleNames true
-    showSkipped false
+    apply plugin: 'java'
+
+    dependencies {
+        // https://mvnrepository.com/artifact/org.testng/testng
+        implementation group: 'org.testng', name: 'testng', version: '7.10.2'
+    }
+
+    configurations.configureEach {
+        exclude group: "commons-logging", module: "commons-logging"
+    }
+
+    tasks.register('testJavadoc', Javadoc) {
+        source = sourceSets.test.allJava + sourceSets.main.allJava
+        classpath = sourceSets.test.compileClasspath
+        destinationDir = file("${layout.buildDirectory.get()}/docs/java-documentation")
+    }
 }

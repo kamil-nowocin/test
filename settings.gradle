@@ -1,1 +1,3 @@
-rootProject.name = 'QA Automation'
+rootProject.name = 'Frontend'
+
+include 'WFE_Common', 'WFE_Websters', 'WFE_Klasters'

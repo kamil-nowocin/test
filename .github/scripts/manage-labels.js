@@ -1,6 +1,6 @@
 const LABELS = [
-  {name: 'APP', color: '0000FF', description: 'Application code changes'},
-  {name: 'TEST', color: 'FFC0CB', description: 'Test code changes'},
+  {name: 'wfe', color: 'FFFFFF', description: 'WFE Common'},
+  {name: 'wfe-websters', color: '0052CC', description: 'WFE Websters'},
   {name: 'build-success', color: '00FF00', description: 'Build succeeded'},
   {name: 'build-failure', color: 'FF0000', description: 'Build failed'}
 ];
@@ -11,19 +11,17 @@ async function manageLabels(github, context) {
   const buildResult = process.env.build_result;
 
   const {data: files} = await github.rest.pulls.listFiles({
-    owner,
-    repo,
-    pull_number: issue_number,
+    owner, repo, pull_number: issue_number,
   });
 
   const labelsToAdd = new Set();
 
   files.forEach(file => {
-    if (file.filename.startsWith('src/main/java')) {
-      labelsToAdd.add('APP');
+    if (file.filename.startsWith('WFE_Common')) {
+      labelsToAdd.add('wfe');
     }
-    if (file.filename.startsWith('src/test/java')) {
-      labelsToAdd.add('TEST');
+    if (file.filename.startsWith('WFE_Websters')) {
+      labelsToAdd.add('wfe-websters');
     }
   });
 
@@ -57,12 +55,14 @@ async function manageLabels(github, context) {
   }));
 
   try {
-    await github.rest.issues.removeLabel({owner, repo, issue_number, name: removeLabel});
+    await github.rest.issues.removeLabel(
+        {owner, repo, issue_number, name: removeLabel});
   } catch (error) {
-    console.log(`Label "${removeLabel}" might not exist: ${error.message}`);
+    console.log(`Label "${removeLabel}" might not exist: ${error.message}!`);
   }
   if (labelsToAdd.size > 0) {
-    await github.rest.issues.addLabels({owner, repo, issue_number, labels: Array.from(labelsToAdd),});
+    await github.rest.issues.addLabels(
+        {owner, repo, issue_number, labels: Array.from(labelsToAdd),});
   }
 }
 

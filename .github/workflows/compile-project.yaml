@@ -1,75 +1,51 @@
-name: Compile Project
-
-permissions:
-  issues: write
-  pull-requests: write
+name: Project Compilation
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
-run-name: ":construction_worker::construction:[#${{ github.run_number }}][Compile Project] PR: \"${{ github.event.pull_request.title }}\" | Commit: ${{ github.sha }}"
+run-name: "👷🚧[#${{ github.run_number }}][BUILD] Compiling project \"${{ github.event.pull_request.title }}\" | Commit SHA: \"${{ github.sha }}\""
 
 on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:
-    inputs:
-      testGroup:
-        description: "Enter the GMAP NLP Backend test group (leave blank if none)"
-        required: false
-        type: string
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: 'Compile Project🛠️'
+    name: "Compile Project 🛠️"
     steps:
-      - name: 'Checkout code'
+      - name: "Checkout code"
         uses: actions/checkout@v4
 
-      - name: 'Set up Node.js'
+      - name: "Set up Node.js"
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
-      - name: 'Install Dependencies'
+      - name: "Install NPM Dependencies"
         run: npm install
         working-directory: .github/scripts
 
-      - name: 'Cache npm dependencies'
+      - name: "Cache NPM dependencies"
         uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-
+            ${{ runner.os }}-node-  
 
-      - name: 'Setting up the environment'
+      - name: "Set up Java"
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: "17"
+          distribution: "temurin"
 
-      - name: 'Grant execute permission for gradlew'
-        run: chmod +x ./gradlew
-
-      - name: "🚨 Run ${{ env.BACKEND_MODULE }} Backend Tests 🚨"
-        run: |
-          GRADLE_COMMAND="./gradlew"
-          if [[ -n "${{ github.event.inputs.testGroup }}" ]]; then
-            GRADLE_COMMAND="$GRADLE_COMMAND -Dgroups='${{ github.event.inputs.testGroup }}'"
-          fi
-          
-          echo "Executing command: $GRADLE_COMMAND"
-          eval "$GRADLE_COMMAND"
-        shell: bash
-
-
-        continue-on-error: true
-
-      - name: 'Cache Gradle packages'
+      - name: "Cache Gradle packages"
         uses: actions/cache@v4
         with:
           path: |
@@ -78,7 +54,15 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: ${{ runner.os }}-gradle-
 
-      - name: 'Set build result'
+      - name: "Grant execute permission for gradlew"
+        run: chmod +x ./gradlew
+
+      - name: "🚨 Run Gradle build without tests 🚨"
+        id: gradle_build
+        run: ./gradlew compileTestJava
+        continue-on-error: true
+
+      - name: "Set build result"
         if: always()
         run: |
           if [[ "${{ steps.gradle_build.outcome }}" == "failure" ]]; then
@@ -88,7 +72,7 @@ jobs:
             echo "build_result=success" >> $GITHUB_ENV
           fi
 
-      - name: 'Apply Labels'
+      - name: "Apply labels on PR"
         if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always()
         uses: actions/github-script@v7
         with:
@@ -96,7 +80,7 @@ jobs:
             const manageLabels = require('./.github/scripts/manage-labels.js');
             await manageLabels(github, context);
 
-      - name: 'Post comment on PR'
+      - name: "Post comment on PR"
         if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always()
         uses: actions/github-script@v7
         with:
@@ -104,8 +88,8 @@ jobs:
             const postComment = require('./.github/scripts/post-comment.js');
             await postComment(github, context);
 
-      - name: 'Send Slack Notification on Failure'
-        if: always() && env.build_result == 'failure'
+      - name: "Send Slack notification"
+        if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always() && env.build_result == 'failure'
         run: npm run send-slack-notification ${{ env.build_result }} "${{ github.event.pull_request.title }}" ${{ github.event.pull_request.user.login }} ${{ github.repository }} ${{ github.run_id }} ${{ github.event.pull_request.number }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
