@@ -124,7 +124,7 @@ jobs:
       - name: "Upload TestNG results artifact"
         uses: actions/upload-artifact@v4
         with:
-          name: "all-modules-testng-reports"
+          name: "${{ env.BACKEND_MODULE }}-testng-report"
           path: artifacts/
           retention-days: 5
 

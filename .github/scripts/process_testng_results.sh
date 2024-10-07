@@ -2,8 +2,6 @@
 
 mkdir -p artifacts
 
-mkdir -p artifacts
-
 for MODULE in $TEST_MODULES; do
   echo "Processing TestNG results for \"$MODULE\""
   MODULE_PATH="/home/runner/work/test/test/$MODULE/build/reports/tests/test"
