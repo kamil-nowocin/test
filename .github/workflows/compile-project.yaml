@@ -15,6 +15,9 @@ on:
       - main
 
 jobs:
+  permissions:
+    contents: write
+    issues: write
   build:
     runs-on: ubuntu-latest
     name: "Compile Project 🛠️"
