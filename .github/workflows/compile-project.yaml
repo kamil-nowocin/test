@@ -17,8 +17,6 @@ on:
 jobs:
   permissions: write-all
   build:
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     runs-on: ubuntu-latest
     name: "Compile Project 🛠️"
     steps:
@@ -74,11 +72,6 @@ jobs:
           else
             echo "build_result=success" >> $GITHUB_ENV
           fi
-
-      - name: "Check GITHUB_TOKEN permissions"
-        run: |
-          curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/${{ github.repository }} | jq .
-
 
       - name: "Apply labels on PR"
         if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always()
