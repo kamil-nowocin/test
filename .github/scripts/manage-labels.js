@@ -1,5 +1,6 @@
 const LABELS = [
   {name: 'wfe', color: 'FFFFFF', description: 'WFE Common'},
+  {name: 'wfe-klasters', color: '0052CC', description: 'WFE Klasters'},
   {name: 'wfe-websters', color: '0052CC', description: 'WFE Websters'},
   {name: 'build-success', color: '00FF00', description: 'Build succeeded'},
   {name: 'build-failure', color: 'FF0000', description: 'Build failed'}
@@ -19,6 +20,9 @@ async function manageLabels(github, context) {
   files.forEach(file => {
     if (file.filename.startsWith('WFE_Common')) {
       labelsToAdd.add('wfe');
+    }
+    if (file.filename.startsWith('WFE_Klasters')) {
+      labelsToAdd.add('wfe-klasters');
     }
     if (file.filename.startsWith('WFE_Websters')) {
       labelsToAdd.add('wfe-websters');
