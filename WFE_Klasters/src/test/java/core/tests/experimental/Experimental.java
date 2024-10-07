@@ -16,4 +16,9 @@ public class Experimental {
     System.out.println("KLASTERS SECOND EXPERIMENTAL TEST!");
     Assert.fail("ON PURPOSE!");
   }
+
+  @Test(testName = "FIRST EXPERIMENTAL TEST - NAME", description = "FIRST EXPERIMENTAL TEST - DESC")
+  public void experimentalTest3() {
+    System.out.println("KLASTERS SECOND EXPERIMENTAL TEST!");
+  }
 }
