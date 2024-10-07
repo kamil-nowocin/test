@@ -15,10 +15,10 @@ on:
       - main
 
 jobs:
-  permissions: write-all
   build:
     runs-on: ubuntu-latest
     name: "Compile Project 🛠️"
+    permissions: write-all
     steps:
       - name: "Checkout code"
         uses: actions/checkout@v4
