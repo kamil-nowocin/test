@@ -15,9 +15,6 @@ on:
       - main
 
 jobs:
-  permissions:
-    contents: write
-    issues: write
   build:
     runs-on: ubuntu-latest
     name: "Compile Project 🛠️"
@@ -76,6 +73,9 @@ jobs:
           fi
 
       - name: "Apply labels on PR"
+        permissions: # Add permissions here, inside the job definition
+          contents: write
+          issues: write
         if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always()
         uses: actions/github-script@v7
         with:
@@ -84,6 +84,9 @@ jobs:
             await manageLabels(github, context);
 
       - name: "Post comment on PR"
+        permissions: # Add permissions here, inside the job definition
+          contents: write
+          issues: write
         if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always()
         uses: actions/github-script@v7
         with:
@@ -92,6 +95,9 @@ jobs:
             await postComment(github, context);
 
       - name: "Send Slack notification"
+        permissions: # Add permissions here, inside the job definition
+          contents: write
+          issues: write
         if: github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' && always() && env.build_result == 'failure'
         run: npm run send-slack-notification ${{ env.build_result }} "${{ github.event.pull_request.title }}" ${{ github.event.pull_request.user.login }} ${{ github.repository }} ${{ github.run_id }} ${{ github.event.pull_request.number }}
         env:
