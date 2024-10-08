@@ -14,11 +14,11 @@ public class Experimental {
   @Test(testName = "FIRST EXPERIMENTAL TEST - NAME", description = "FIRST EXPERIMENTAL TEST - DESC")
   public void experimentalTest2() {
     System.out.println("KLASTERS SECOND EXPERIMENTAL TEST!");
-    Assert.fail("ON PURPOSE!")
+    Assert.fail("ON PURPOSE!");
   }
 
   @Test(testName = "FIRST EXPERIMENTAL TEST - NAME", description = "FIRST EXPERIMENTAL TEST - DESC")
   public void experimentalTest3() {
-    System.out.println("KLASTERS SECOND EXPERIMENTAL TEST!");
+    System.out.println("KLASTERS SECOND EXPERIMENTAL TEST!")
   }
 }
