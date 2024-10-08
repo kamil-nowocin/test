@@ -8,8 +8,8 @@ run-name: "👷🚧[#${{ github.run_number }}][TEST] Executing tests${{ github.e
 
 on:
   schedule:
-    - cron: "30 7 * * 1-5" # 19:55 CEST - WFE Websters
-    - cron: "50 7 * * 1-5" # 20:00 CEST - WFE Websters
+    - cron: "55 7 * * 1-5" # 19:55 CEST - WFE Websters
+    - cron: "20 8 * * 1-5" # 20:00 CEST - WFE Websters
 
   workflow_dispatch:
     inputs:
@@ -67,9 +67,9 @@ jobs:
       XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
       SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
       BUILD_NUMBER: ${{ github.run_number }}
-      BACKEND_MODULE: "TO_BE_SET"
-      GRADLE_TASK: "TO_BE_SET"
-      TEST_MODULES: "TO_BE_SET"
+      BACKEND_MODULE:
+      GRADLE_TASK:
+      TEST_MODULES:
 
     steps:
       - name: "Checkout code"
