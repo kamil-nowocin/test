@@ -8,8 +8,8 @@ run-name: "👷🚧[#${{ github.run_number }}][TEST] Executing tests${{ github.e
 
 on:
   schedule:
-    - cron: "30 11 * * 1-5" # 13:30 CEST - WFE Websters
-    - cron: "50 11 * * 1-5" # 13:50 CEST - WFE Websters
+    - cron: "40 13 * * 1-5" # 13:30 CEST - WFE Websters
+    - cron: "00 14 * * 1-5" # 13:50 CEST - WFE Websters
 
   workflow_dispatch:
     inputs:
@@ -67,9 +67,9 @@ jobs:
       XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
       SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
       BUILD_NUMBER: ${{ github.run_number }}
-      BACKEND_MODULE:
-      GRADLE_TASK:
       TEST_MODULES:
+      TEST_MODULE:
+      GRADLE_TASK:
 
     steps:
       - name: "Checkout code"
@@ -103,10 +103,10 @@ jobs:
           GITHUB_INPUTS_MODULE: ${{ github.event.inputs.frontendModule }}
         shell: bash
 
-      - name: "🚨 Run ${{ env.BACKEND_MODULE }} Tests 🚨"
+      - name: "🚨 Run ${{ env.TEST_MODULE }} Tests 🚨"
         run: ${{ github.workspace }}/.github/scripts/run_backend_tests.sh
         env:
-          BACKEND_MODULE: ${{ env.BACKEND_MODULE }}
+          TEST_MODULE: ${{ env.TEST_MODULE }}
           GRADLE_TASK: ${{ env.GRADLE_TASK }}
           FRONTEND_ENVIRONMENT: ${{ env.FRONTEND_ENVIRONMENT }}
           ENABLE_TEST_RETRY: ${{ env.ENABLE_TEST_RETRY }}
@@ -124,7 +124,7 @@ jobs:
       - name: "Upload TestNG results artifact"
         uses: actions/upload-artifact@v4
         with:
-          name: "${{ env.BACKEND_MODULE }}-testng-report"
+          name: "${{ env.TEST_MODULE }}-testng-report"
           path: artifacts/
           retention-days: 5
 
