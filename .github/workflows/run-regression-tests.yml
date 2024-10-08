@@ -8,8 +8,8 @@ run-name: "👷🚧[#${{ github.run_number }}][TEST] Executing tests${{ github.e
 
 on:
   schedule:
-    - cron: "50 8 * * 1-5" # 19:55 CEST - WFE Websters
-    - cron: "15 9 * * 1-5" # 20:00 CEST - WFE Websters
+    - cron: "35 9 * * 1-5" # 19:55 CEST - WFE Websters
+    - cron: "55 9 * * 1-5" # 20:00 CEST - WFE Websters
 
   workflow_dispatch:
     inputs:
