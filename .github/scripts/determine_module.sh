@@ -26,10 +26,12 @@ else
   exit 1
 fi
 
+TEST_MODULES_STRING="${TEST_MODULES[*]}"
 {
   echo "BACKEND_MODULE=$BACKEND_MODULE"
   echo "GRADLE_TASK=$GRADLE_TASK"
-  echo "TEST_MODULES=${TEST_MODULES[*]}"
+  echo "TEST_MODULES=$TEST_MODULES_STRING"
 } >> "$GITHUB_ENV"
 
 echo "Selected backend module: $BACKEND_MODULE"
+echo "Serialized TEST_MODULES: $TEST_MODULES_STRING"
