@@ -1,13 +1,6 @@
-# CircleK | Web Frontend
-
-This glossary defines key screens, key terms, and concepts used throughout CircleK WFE Test
-framework to ensure consistent understanding for all Test Automation Engineers.
-
-## Screenshots and Code Names
-
 ### General Screens
 
-| Screenshot                                                                                                                                                                                                                               | Code Name | Description |
-|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|-------------|
-| ![404-not-found-service-mastercard.jpg](images/404-not-found-service-mastercard.jpg)                                                                                                                                                     | `123`     | 123         |
-| <a href="https://github.com/kamil-nowocin/test/blob/main/docs/images/404-not-found-service-mastercard.jpg"><img src="https://github.com/kamil-nowocin/test/blob/main/docs/images/404-not-found-service-mastercard.jpg" width="700"/></a> | `456`     | 456         |
+| Screenshot                                                                                                                                                                                                                                 | Code Name | Description |
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|-------------|
+| ![404-not-found-service-mastercard.jpg](images/404-not-found-service-mastercard.jpg)                                                                                                                                                       | `123`     | 123         |
+| <details><summary><img src="images/404-not-found-service-mastercard.jpg" alt="404 Image Small Preview" width="300"/></summary> <br> <img src="images/404-not-found-service-mastercard.jpg" alt="404 Full Preview" width="700"/> </details> | `456`     | 456         |
