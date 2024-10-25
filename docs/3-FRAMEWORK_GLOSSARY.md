@@ -7,7 +7,7 @@ framework to ensure consistent understanding for all Test Automation Engineers.
 
 ### General Screens
 
-| Screenshot                                                                                                                                                          | Code Name | Description |
-|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|-------------|
-| ![404-not-found-service-mastercard.jpg](images/404-not-found-service-mastercard.jpg)                                                                                | `123`     | 123         |
-| <a href="..images/forgot-password-service-mastercard.jpg"><img src="..images/forgot-password-service-mastercard.jpg" alt="verify-ubuntu-env-vars" width="300"/></a> | `456`     | 456         |
+| Screenshot                                                                                                                                                                                                                                                            | Code Name | Description |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|-------------|
+| ![404-not-found-service-mastercard.jpg](images/404-not-found-service-mastercard.jpg)                                                                                                                                                                                  | `123`     | 123         |
+| <a href="https://github.com/kamil-nowocin/test/blob/main/docs/images/404-not-found-service-mastercard.jpg"><img src="https://github.com/kamil-nowocin/test/blob/main/docs/images/404-not-found-service-mastercard.jpg" alt="verify-ubuntu-env-vars" width="300"/></a> | `456`     | 456         |
