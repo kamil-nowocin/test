@@ -39,7 +39,11 @@ public class Experimental {
   public void setup() {
     WebDriverManager.chromedriver().setup();
     ChromeOptions options = new ChromeOptions();
-    options.addArguments("--incognito");
+    options.addArguments("--headless"); // Uruchamia przeglądarkę w trybie bezgłowym
+    options.addArguments("--disable-gpu"); // Wyłącza GPU (zalecane dla CI)
+    options.addArguments("--no-sandbox"); // Wyłącza sandboxing
+    options.addArguments("--disable-dev-shm-usage"); // Zmniejsza zużycie pamięci współdzielonej
+    options.addArguments("--incognito"); // Włącza tryb incognito
     driver = new ChromeDriver(options);
     driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
     wait = new WebDriverWait(driver, Duration.ofSeconds(10));
