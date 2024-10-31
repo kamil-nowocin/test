@@ -1,19 +1,19 @@
-name: Regression Testing
+name: CircleK WFE | Regression Testing
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 
-run-name: "👷🚧[#${{ github.run_number }}][TEST] Executing tests${{ github.event_name != 'schedule' && ' of ' || '' }}${{ github.event_name != 'schedule' && github.event.inputs.frontendModule || '' }} on ${{ github.event_name == 'schedule' && 'UAT (PROD-1)' || github.event.inputs.frontendEnvironment }}🌍"
+run-name: "👷🚧[#${{ github.run_number }}][TEST] Executing tests${{ github.event_name != 'schedule' && ' of ' || '' }}${{ github.event_name != 'schedule' && github.event.inputs.testModule || '' }} on ${{ github.event_name == 'schedule' && 'UAT (PROD-1)' || github.event.inputs.testEnvironment }}🌍"
 
 on:
-  schedule:
-    - cron: "30 13 * * 1-5" # 13:30 CEST - WFE_Websters
-    - cron: "00 14 * * 1-5" # 13:50 CEST - WFE_Klasters
+  #  schedule:
+  #    - cron: "00 6 * * 1-5" # 8:00 CEST - WFE_service-okta-auth
+  #    - cron: "00 7 * * 1-5" # 9:00 CEST - WFE_service-mastercard
 
   workflow_dispatch:
     inputs:
-      frontendModule:
+      testModule:
         description: "Select the WEB module:"
         required: true
         type: choice
@@ -21,7 +21,7 @@ on:
           - "WFE_All"
           - "WFE_Websters"
           - "WFE_Klasters"
-      frontendEnvironment:
+      testEnvironment:
         description: "Select the WEB environment:"
         required: true
         type: choice
@@ -30,7 +30,7 @@ on:
           - "UAT (PROD-1)"
           - "INTG (PROD-2)"
           - "DEV"
-      frontendTestGroup:
+      testGroup:
         description: "Select the WEB test group:"
         required: true
         type: choice
@@ -38,6 +38,13 @@ on:
           - "ALL"
           - "REGRESSION"
           - "SMOKE"
+      enablePKCE:
+        description: "Enable PKCE?"
+        required: true
+        type: choice
+        options:
+          - "NO"
+          - "YES"
       enableTestRetry:
         description: "Enable re-run of failing tests?"
         required: true
@@ -59,7 +66,8 @@ jobs:
     runs-on: ubuntu-latest
     name: "Build & Execute Tests 🛠️"
     env:
-      FRONTEND_ENVIRONMENT: ${{ github.event_name == 'schedule' && 'UAT' || github.event.inputs.frontendEnvironment }}
+      TEST_ENVIRONMENT: ${{ github.event_name == 'schedule' && 'UAT' || github.event.inputs.testEnvironment }}
+      ENABLE_PKCE: ${{ github.event_name == 'schedule' && 'false' || (github.event.inputs.enablePKCE == 'YES' && 'true' || 'false') }}
       ENABLE_TEST_RETRY: ${{ github.event_name == 'schedule' && 'false' || github.event.inputs.enableTestRetry }}
       ENABLE_XRAY_REPORT: ${{ github.event_name == 'schedule' && 'false' || github.event.inputs.enableXrayReport }}
       ENABLE_SLACK_REPORT: ${{ github.event_name == 'schedule' && 'false' || github.event.inputs.enableSlackReport }}
@@ -96,23 +104,24 @@ jobs:
       - name: "Grant execute permission for all scripts in .github/scripts"
         run: chmod +x ${{ github.workspace }}/.github/scripts/*
 
-      - name: "Determine WFE Module"
+      - name: "Determine WFE Test Module"
         run: ${{ github.workspace }}/.github/scripts/determine_module.sh
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
-          GITHUB_INPUTS_MODULE: ${{ github.event.inputs.frontendModule }}
+          GITHUB_INPUTS_TEST_MODULE: ${{ github.event.inputs.testModule }}
         shell: bash
 
       - name: "🚨 Run ${{ env.TEST_MODULE }} Tests 🚨"
-        run: ${{ github.workspace }}/.github/scripts/run_backend_tests.sh
+        run: ${{ github.workspace }}/.github/scripts/run_tests.sh
         env:
-          TEST_MODULE: ${{ env.TEST_MODULE }}
           GRADLE_TASK: ${{ env.GRADLE_TASK }}
-          FRONTEND_ENVIRONMENT: ${{ env.FRONTEND_ENVIRONMENT }}
+          TEST_MODULE: ${{ env.TEST_MODULE }}
+          TEST_ENVIRONMENT: ${{ env.TEST_ENVIRONMENT }}
+          ENABLE_PKCE: ${{ env.ENABLE_PKCE }}
           ENABLE_TEST_RETRY: ${{ env.ENABLE_TEST_RETRY }}
           ENABLE_XRAY_REPORT: ${{ env.ENABLE_XRAY_REPORT }}
           ENABLE_SLACK_REPORT: ${{ env.ENABLE_SLACK_REPORT }}
-          GITHUB_EVENT_INPUTS_TEST_GROUP: ${{ github.event.inputs.frontendTestGroup }}
+          GITHUB_EVENT_INPUTS_TEST_GROUP: ${{ github.event.inputs.testGroup }}
         shell: bash
 
       - name: "Process TestNG results"
@@ -167,7 +176,7 @@ jobs:
         if: github.ref == 'refs/heads/master' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: allure-history
           commit_message: "[WFE-🤖] Automated deployment of Allure Report | ${{ github.run_number }}"
