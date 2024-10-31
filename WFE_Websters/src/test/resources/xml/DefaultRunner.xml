@@ -7,7 +7,7 @@
 
   <test enabled="true" name="EXPERIMENTAL WEBSTER">
     <classes>
-      <class name="core.tests.experimental.Experimental"/>
+      <class name="core.tests.experimental.Experimental2"/>
     </classes>
   </test>
 
