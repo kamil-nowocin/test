@@ -17,7 +17,7 @@ if [[ "$GITHUB_EVENT_NAME" == "schedule" ]]; then
         ;;
     esac
 elif [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
-    TEST_MODULE="$GITHUB_INPUTS_MODULE"
+    TEST_MODULE="GITHUB_INPUTS_TEST_MODULE"
     if [[ "$TEST_MODULE" == "WFE_All" ]]; then
         GRADLE_TASK="test"
         TEST_MODULES=("WFE_Websters" "WFE_Klasters")
