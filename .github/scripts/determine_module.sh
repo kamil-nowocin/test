@@ -9,8 +9,8 @@ initialize_module_settings() {
 if [[ "$GITHUB_EVENT_NAME" == "schedule" ]]; then
     CURRENT_TIME=$((10#$(date -u +"%H%M")))
     case $CURRENT_TIME in
-        133[0-9]|135[0-5]) initialize_module_settings "WFE_Websters" ;;
-        140[0-9]|142[0-5]) initialize_module_settings "WFE_Klasters" ;;
+        210[0-9] | 211[0-9]) initialize_module_settings "WFE_Websters" ;;
+        213[0-9] | 214[0-9]) initialize_module_settings "WFE_Klasters" ;;
     *)
         echo "No matching time found for $CURRENT_TIME! Exiting..."
         exit 1

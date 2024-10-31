@@ -7,9 +7,9 @@ concurrency:
 run-name: "👷🚧[#${{ github.run_number }}][TEST] Executing tests${{ github.event_name != 'schedule' && ' of ' || '' }}${{ github.event_name != 'schedule' && github.event.inputs.testModule || '' }} on ${{ github.event_name == 'schedule' && 'UAT (PROD-1)' || github.event.inputs.testEnvironment }}🌍"
 
 on:
-  #  schedule:
-  #    - cron: "00 6 * * 1-5" # 8:00 CEST - WFE_service-okta-auth
-  #    - cron: "00 7 * * 1-5" # 9:00 CEST - WFE_service-mastercard
+  schedule:
+  - cron: "00 21 * * 1-5"
+  - cron: "30 21 * * 1-5"
 
   workflow_dispatch:
     inputs:
