@@ -75,9 +75,9 @@ jobs:
       XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
       SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
       BUILD_NUMBER: ${{ github.run_number }}
-      TEST_MODULES:
-      TEST_MODULE:
-      GRADLE_TASK:
+      TEST_MODULES: ""
+      TEST_MODULE: ""
+      GRADLE_TASK: ""
 
     steps:
       - name: "Checkout code"
