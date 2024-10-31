@@ -1,0 +1,2 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","11799","Test that navigates to Google, dismisses the search engine prompt, performs a search, and verifies results.","Frontend Test Automation - KLASTERS","Thu Oct 31 19:53:46 GMT 2024","failed","Thu Oct 31 19:53:58 GMT 2024","core.tests.experimental.Experimental","EXPERIMENTAL KLASTERS","core.tests.experimental.Experimental","googleSearchTestInIncognito"
