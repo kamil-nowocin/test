@@ -1,0 +1,3 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","6","FIRST EXPERIMENTAL TEST - DESC","Frontend Test Automation - WEBSTERS","Fri Nov 01 21:15:51 GMT 2024","failed","Fri Nov 01 21:15:51 GMT 2024","core.tests.experimental.Experimental2","EXPERIMENTAL WEBSTER","core.tests.experimental.Experimental2","experimentalTest2"
+"","12593","Test that navigates to Google, dismisses the search engine prompt, performs a search, and verifies results.","Frontend Test Automation - WEBSTERS","Fri Nov 01 21:15:51 GMT 2024","passed","Fri Nov 01 21:16:03 GMT 2024","core.tests.experimental.Experimental2","EXPERIMENTAL WEBSTER","core.tests.experimental.Experimental2","googleSearchTestInIncognito"
